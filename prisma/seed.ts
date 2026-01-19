@@ -1,4 +1,12 @@
-import { PrismaClient, Role, ApplicationStatus } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
+
+import { ApplicationStatus } from '@prisma/client'
+
+enum Role {
+  ADMIN = 'ADMIN',
+  STUDENT = 'STUDENT',
+  // Add other roles if needed, matching your Prisma schema
+}
 
 const prisma = new PrismaClient()
 
