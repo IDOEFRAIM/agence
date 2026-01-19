@@ -1,5 +1,5 @@
 // Ce fichier gère uniquement les appels BDD pour les utilisateurs
-import prisma from "@/lib/prisma"
+import { prisma } from "@/lib/prisma"
 import { Role, User } from "@prisma/client"
 
 export const userService = {

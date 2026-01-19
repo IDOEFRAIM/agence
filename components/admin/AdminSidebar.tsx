@@ -8,12 +8,14 @@ import { logoutAction } from "@/actions/logout.action";
 import { cn } from "@/lib/utils";
 
 const MENU_ITEMS = [
-  { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutGrid },
-  { label: 'Etudiants', href: '/admin/students', icon: Users },
-  { label: 'Documents', href: '/admin/documents', icon: FileText },
-  { label: 'Activités', href: '/admin/activity', icon: Bell },
-  { label: 'Archives', href: '/admin/archive', icon: Archive },
-  { label: 'Paramètres', href: '/admin/settings', icon: Settings },
+   { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutGrid },
+   { label: 'Etudiants', href: '/admin/students', icon: Users },
+   { label: 'Documents', href: '/admin/documents', icon: FileText },
+   // { label: 'Activités', href: '/admin/activity', icon: Bell }, // Removed
+   // { label: 'Propositions', href: '/admin/proposals', icon: Archive }, // Removed proposals menu item
+   // { label: 'Paramètres', href: '/admin/settings', icon: Settings }, // Hidden for now
+   { label: 'Universités', href: '/admin/universities', icon: Globe },
+   { label: 'Ajouter Université', href: '/admin/universities/new', icon: Globe },
 ];
 
 export function AdminSidebar({ user }: { user: any }) {
@@ -38,7 +40,7 @@ export function AdminSidebar({ user }: { user: any }) {
             {/* PROFILE SECTION */}
             <div className={cn("flex flex-col items-center mb-10 text-center transition-all duration-300", isCollapsed && "mb-8")}>
                <div className={cn(
-                  "rounded-2xl bg-gradient-to-tr from-blue-500 to-cyan-400 p-0.5 shadow-lg shadow-blue-500/30 transition-all duration-300",
+                  "rounded-2xl bg-linear-to-tr from-blue-500 to-cyan-400 p-0.5 shadow-lg shadow-blue-500/30 transition-all duration-300",
                   isCollapsed ? "h-10 w-10 mb-2" : "h-20 w-20 mb-4"
                )}>
                   <div className="h-full w-full rounded-[14px] bg-white p-1">
@@ -51,7 +53,7 @@ export function AdminSidebar({ user }: { user: any }) {
                </div>
                {!isCollapsed && (
                   <div className="animate-in fade-in zoom-in duration-300">
-                     <h3 className="font-bold text-slate-800 text-lg whitespace-nowrap overflow-hidden text-ellipsis max-w-[180px]">{user?.fullName?.split(' ')[0]}</h3>
+                     <h3 className="font-bold text-slate-800 text-lg whitespace-nowrap overflow-hidden text-ellipsis max-w-45">{user?.fullName?.split(' ')[0]}</h3>
                      <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Admin</p>
                   </div>
                )}

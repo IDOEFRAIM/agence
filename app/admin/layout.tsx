@@ -1,5 +1,5 @@
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { authService } from "@/services/auth.service";
 import { redirect } from "next/navigation";
 

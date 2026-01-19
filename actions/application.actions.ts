@@ -5,7 +5,7 @@ import { authService } from "@/services/auth.service"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 export async function createApplicationAction(universityId: string) {
   try {
@@ -58,10 +58,11 @@ export async function rejectApplicationAction(applicationId: string, reason: str
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (user?.role !== 'ADMIN') throw new Error("Unauthorized");
 
+    // 'REJECTED' is not a valid ApplicationStatus. Use a valid status, e.g., 'UNDER_REVIEW', and store the reason.
     await prisma.application.update({
         where: { id: applicationId },
         data: {
-            status: 'REJECTED',
+            status: 'UNDER_REVIEW', // or another valid status
             rejectionReason: reason
         }
     });

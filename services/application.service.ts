@@ -1,6 +1,6 @@
 // Ce fichier gère la logique des candidatures
-import prisma from "@/lib/prisma"
-import { ApplicationStatus } from "@prisma/client"
+import { prisma } from "@/lib/prisma"
+// import { ApplicationStatus } from "@prisma/client"
 
 export const applicationService = {
   // Créer une nouvelle candidature
@@ -21,7 +21,7 @@ export const applicationService = {
       data: {
         userId,
         universityId,
-        status: ApplicationStatus.DRAFT, // Commence en brouillon
+        status: "DRAFT", // Commence en brouillon
         progress: 10, // 10% car le dossier est ouvert
       }
     })

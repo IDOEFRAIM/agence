@@ -19,12 +19,6 @@ export function SettingsView({ user }: { user: any }) {
                 label="Mon Profil" 
             />
             <TabButton 
-                active={activeTab === 'universities'} 
-                onClick={() => setActiveTab('universities')} 
-                icon={Building2} 
-                label="Universités" 
-            />
-            <TabButton 
                 active={activeTab === 'admins'} 
                 onClick={() => setActiveTab('admins')} 
                 icon={Shield} 
@@ -39,7 +33,7 @@ export function SettingsView({ user }: { user: any }) {
         </aside>
 
         {/* Content Area */}
-        <div className="flex-1 bg-white rounded-2xl shadow-sm border border-slate-100 p-8 min-h-[500px]">
+        <div className="flex-1 bg-white rounded-2xl shadow-sm border border-slate-100 p-8 min-h-125">
             {activeTab === 'profile' && <ProfileSettings user={user} />}
             {activeTab === 'universities' && <UniversitySettings />}
             {activeTab === 'admins' && <AdminSettings />}
@@ -137,15 +131,14 @@ function ProfileSettings({ user }: { user: any }) {
 function UniversitySettings() {
     return (
         <div className="space-y-6">
-             <div>
+            <div>
                 <h2 className="text-xl font-bold text-slate-800">Gestion des Universités</h2>
                 <p className="text-sm text-slate-400">Ajoutez ou modifiez les universités partenaires.</p>
             </div>
             <div className="h-px bg-slate-100" />
-
-            <div className="bg-blue-50 text-blue-800 p-4 rounded-xl text-sm font-medium">
-                Cette section permettra d'ajouter, modifier ou supprimer des universités du catalogue.
-                Pour l'instant, veuillez utiliser la base de données directement.
+            <div>
+                {/* Formulaire dynamique d'ajout d'université */}
+                {require('@/components/admin/AddUniversityForm').default()}
             </div>
         </div>
     )

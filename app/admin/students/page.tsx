@@ -1,11 +1,23 @@
+'use client';
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 import { applicationService } from "@/services/application.service";
 import Link from "next/link";
 import { Eye, FileText, Search, Filter } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { DeleteApplicationButton } from "@/components/admin/DeleteApplicationButton";
 
-export default async function StudentsPage() {
-  const applications = await applicationService.getAllApplications();
+export default function AdminStudentsPage() {
+  const { data: students = [], isLoading, error } = useQuery({
+    queryKey: ["adminStudents"],
+    queryFn: async () => {
+      const res = await axios.get("/api/admin/students");
+      return res.data.students || [];
+    }
+  });
+
+  if (isLoading) return <div>Chargement...</div>;
+  if (error) return <div>Erreur lors du chargement des étudiants.</div>;
 
   return (
     <main className="p-8 md:p-12">
@@ -30,7 +42,7 @@ export default async function StudentsPage() {
         </div>
       </header>
 
-      <div className="bg-white rounded-[24px] shadow-sm border border-slate-100/50 overflow-hidden">
+      <div className="bg-white rounded-3xl shadow-sm border border-slate-100/50 overflow-hidden">
         <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead className="bg-slate-50/50 text-slate-400 text-xs font-bold uppercase tracking-wider">
@@ -44,33 +56,33 @@ export default async function StudentsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {applications.map((app) => (
+            {students.map((app: any) => (
               <tr key={app.id} className="hover:bg-slate-50/50 transition-colors group">
                 <td className="py-4 px-6">
                   <div className="flex items-center gap-3">
-                     <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-blue-100 to-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">
-                        {app.user.fullName.substring(0,2).toUpperCase()}
+                     <div className="h-10 w-10 rounded-full bg-linear-to-tr from-blue-100 to-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">
+                        {(app.fullName || app.email || "?").substring(0,2).toUpperCase()}
                      </div>
                      <div>
-                        <div className="font-bold text-slate-800">{app.user.fullName}</div>
-                        <div className="text-slate-400 text-xs font-medium">{app.user.email}</div>
+                        <div className="font-bold text-slate-800">{app.fullName || app.email || "Étudiant"}</div>
+                        <div className="text-slate-400 text-xs font-medium">{app.email || "-"}</div>
                      </div>
                   </div>
                 </td>
                 <td className="py-4 px-6">
-                   <div className="font-bold text-slate-700 text-sm">{app.university.name}</div>
-                   <div className="text-slate-400 text-xs">{app.desiredProgram}</div>
+                   <div className="font-bold text-slate-700 text-sm">{app.university?.name || "-"}</div>
+                   <div className="text-slate-400 text-xs">{app.desiredProgram || "-"}</div>
                 </td>
                 <td className="py-4 px-6">
                     <div className="flex items-center gap-1 text-slate-500 text-sm font-bold">
-                        <FileText size={16} /> {app.documents.length}
+                        <FileText size={16} /> {Array.isArray(app.documents) ? app.documents.length : 0}
                     </div>
                 </td>
                 <td className="py-4 px-6">
-                   <StatusBadge status={app.status} />
+                   <StatusBadge status={app.status || "-"} />
                 </td>
                 <td className="py-4 px-6 text-slate-500 text-sm font-medium">
-                   {new Date(app.createdAt).toLocaleDateString()}
+                   {app.createdAt ? new Date(app.createdAt).toLocaleDateString() : "-"}
                 </td>
                 <td className="py-4 px-6 text-right">
                    <div className="flex items-center justify-end gap-2">
@@ -79,7 +91,7 @@ export default async function StudentsPage() {
                            <Eye size={18} />
                         </Button>
                      </Link>
-                     <DeleteApplicationButton applicationId={app.id} studentName={app.user.fullName || "Étudiant"} />
+                     <DeleteApplicationButton applicationId={app.id} studentName={app.fullName || app.email || "Étudiant"} />
                    </div>
                 </td>
               </tr>
@@ -87,7 +99,7 @@ export default async function StudentsPage() {
           </tbody>
         </table>
         </div>
-        {applications.length === 0 && (
+        {students.length === 0 && (
            <div className="p-12 text-center text-slate-400">Aucune demande trouvée.</div>
         )}
       </div>

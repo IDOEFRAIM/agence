@@ -1,9 +1,23 @@
-export default function FinancesPage() {
+'use client';
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+
+export default function AdminFinancesPage() {
+  const { data: finances = [], isLoading, error } = useQuery({
+    queryKey: ["adminFinances"],
+    queryFn: async () => {
+      const res = await axios.get("/api/admin/finances");
+      return res.data.finances || [];
+    }
+  });
+
+  if (isLoading) return <div>Chargement...</div>;
+  if (error) return <div>Erreur lors du chargement des finances.</div>;
+
   return (
-    <div className="p-8 flex flex-col items-center justify-center h-full text-slate-400">
-      <div className="text-4xl mb-4">💰</div>
-      <h2 className="text-xl font-bold text-slate-600">Module Finances</h2>
-      <p>En cours de développement.</p>
-    </div>
+    <main>
+      {/* Affichage des finances */}
+      {/* ... */}
+    </main>
   );
 }

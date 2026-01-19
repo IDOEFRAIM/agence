@@ -1,21 +1,39 @@
-import prisma from "@/lib/prisma";
-import { DocumentActions } from "@/components/admin/DocumentActions"; // Reusing the actions component if possible, or I might need to adapt it. 
-// Actually DocumentActions takes id and currentStatus, which is perfect.
+'use client';
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import {prisma} from "@/lib/prisma";
+import { DocumentActions } from "@/components/admin/DocumentActions"; 
 import Link from "next/link";
 import { FileText, Search, Filter, Download } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { getFileUrl } from "@/lib/storage";
+import { useEffect, useState } from "react";
 
-export default async function DocumentsPage() {
-  const documents = await prisma.document.findMany({
-    include: {
-      application: {
-        include: {
-          user: true
-        }
-      }
-    },
-    orderBy: { createdAt: 'desc' }
+export default function AdminDocumentsPage() {
+  const { data: documents = [], isLoading, error } = useQuery({
+    queryKey: ["adminDocuments"],
+    queryFn: async () => {
+      const res = await axios.get("/api/admin/documents");
+      return res.data.documents || [];
+    }
   });
+
+  const [signedUrls, setSignedUrls] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    async function fetchUrls() {
+      if (!documents || documents.length === 0) return;
+      const urlMap: Record<string, string> = {};
+      await Promise.all(documents.map(async (doc: any) => {
+        urlMap[doc.id] = (await getFileUrl(doc.url)) ?? "";
+      }));
+      setSignedUrls(urlMap);
+    }
+    fetchUrls();
+  }, [documents]);
+
+  if (isLoading) return <div>Chargement...</div>;
+  if (error) return <div>Erreur lors du chargement des documents.</div>;
 
   return (
     <main className="p-8 md:p-12">
@@ -40,7 +58,7 @@ export default async function DocumentsPage() {
         </div>
       </header>
 
-      <div className="bg-white rounded-[24px] shadow-sm border border-slate-100/50 overflow-hidden">
+      <div className="bg-white rounded-3xl shadow-sm border border-slate-100/50 overflow-hidden">
         <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead className="bg-slate-50/50 text-slate-400 text-xs font-bold uppercase tracking-wider">
@@ -54,18 +72,24 @@ export default async function DocumentsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {documents.map((doc) => (
+            {documents.map((doc: any) => (
               <tr key={doc.id} className="hover:bg-slate-50/50 transition-colors group">
                 <td className="py-4 px-6">
-                  <Link href={doc.url} target="_blank" className="flex items-center gap-3 group/link">
-                     <div className="h-10 w-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover/link:bg-blue-600 group-hover/link:text-white transition-colors">
-                        <FileText size={20} />
-                     </div>
-                     <div>
-                        <div className="font-bold text-slate-800 group-hover/link:text-blue-600 transition-colors">{doc.name}</div>
-                        <div className="text-slate-400 text-xs font-medium uppercase">{doc.url.split('.').pop()}</div>
-                     </div>
-                  </Link>
+                  {signedUrls[doc.id] ? (
+                    <Link href={signedUrls[doc.id]} target="_blank" className="flex items-center gap-3 group/link">
+                       <div className="h-10 w-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover/link:bg-blue-600 group-hover/link:text-white transition-colors">
+                          <FileText size={20} />
+                       </div>
+                       <div>
+                          <div className="font-bold text-slate-800 group-hover/link:text-blue-600 transition-colors">{doc.name}</div>
+                          <div className="text-slate-400 text-xs font-medium uppercase">{doc.url.split('.').pop()}</div>
+                       </div>
+                    </Link>
+                  ) : (
+                    <div className="flex items-center gap-2 text-slate-400 text-xs font-medium">
+                      <span className="animate-pulse">Lien en cours…</span>
+                    </div>
+                  )}
                 </td>
                 <td className="py-4 px-6">
                    <div className="font-bold text-slate-700 text-sm">{doc.application.user.fullName}</div>
@@ -83,11 +107,17 @@ export default async function DocumentsPage() {
                    <StatusBadge status={doc.status} />
                 </td>
                 <td className="py-4 px-6 text-right flex justify-end items-center gap-2">
-                   <Link href={doc.url} target="_blank">
-                      <Button variant="ghost" size="sm" className="h-9 w-9 p-0 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50">
-                         <Download size={18} />
-                      </Button>
-                   </Link>
+                   {signedUrls[doc.id] ? (
+                     <Link href={signedUrls[doc.id]} target="_blank">
+                        <Button variant="ghost" size="sm" className="h-9 w-9 p-0 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50">
+                           <Download size={18} />
+                        </Button>
+                     </Link>
+                   ) : (
+                     <Button variant="ghost" size="sm" className="h-9 w-9 p-0 rounded-lg text-slate-400 opacity-50 cursor-not-allowed" disabled>
+                       <Download size={18} />
+                     </Button>
+                   )}
                    <div className="scale-90 origin-right">
                       <DocumentActions id={doc.id} currentStatus={doc.status} />
                    </div>

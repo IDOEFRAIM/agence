@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import prisma from "@/lib/prisma"
+import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import { cookies } from "next/headers"
 import { Button } from "@/components/ui/Button"
@@ -49,7 +49,7 @@ export default async function StudentDashboard() {
 
   const currentApp = student.applications[0];
   const currentStatus = currentApp?.status || 'DRAFT';
-  const currentIndex = TIMELINE_STEPS.findIndex(s => s.id === currentStatus);
+   const currentIndex = TIMELINE_STEPS.findIndex((s: any) => s.id === currentStatus);
 
   return (
     <div className="min-h-screen bg-[#F4F7FE] font-sans">
@@ -66,7 +66,7 @@ export default async function StudentDashboard() {
                 <div className="text-sm font-bold text-slate-900">{student.fullName}</div>
                 <div className="text-xs text-slate-500">Dossier #{student.id.substring(0, 6)}</div>
              </div>
-             <div className="h-10 w-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20">
+             <div className="h-10 w-10 bg-linear-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20">
               {student.fullName?.charAt(0)}
             </div>
             
@@ -104,7 +104,7 @@ export default async function StudentDashboard() {
 
              <div className="relative z-10">
                  {/* VERTICAL CONNECTING LINE */}
-                 <div className="absolute left-[13px] md:left-[15px] top-[14px] md:top-4 bottom-10 w-0.5 bg-slate-100"></div>
+                 <div className="absolute left-3.25 md:left-3.75 top-3.5 md:top-4 bottom-10 w-0.5 bg-slate-100"></div>
 
                  <div className="space-y-8 relative">
                     {TIMELINE_STEPS.map((step, index) => {
@@ -188,15 +188,18 @@ export default async function StudentDashboard() {
                   {currentApp ? (
                      <UploadDocumentButton applicationId={currentApp.id} />
                   ) : (
-                     <div className="p-3 text-xs text-center text-amber-600 bg-amber-50 rounded-xl font-bold">
-                        Veuillez d'abord initier une candidature.
+                     <div className="flex flex-col items-center gap-2">
+                       <div className="p-3 text-xs text-center text-amber-600 bg-amber-50 rounded-xl font-bold">
+                         Veuillez d'abord initier une candidature.
+                       </div>
+                       <a href="/" className="text-blue-600 underline text-xs font-medium hover:text-blue-800 transition-colors">← Retour à l'accueil pour voir les universités</a>
                      </div>
                   )}
                </div>
             </div>
 
             {/* Help Widget */}
-            <div className="bg-gradient-to-br from-[#1e293b] to-[#0f172a] rounded-3xl p-6 text-white shadow-xl shadow-slate-900/10">
+            <div className="bg-linear-to-br from-[#1e293b] to-[#0f172a] rounded-3xl p-6 text-white shadow-xl shadow-slate-900/10">
                <h3 className="font-bold mb-4 text-lg">Besoin d'aide ?</h3>
                <p className="text-slate-400 text-sm mb-6 leading-relaxed">
                    Si vous avez des questions sur votre processus, contactez notre équipe support.

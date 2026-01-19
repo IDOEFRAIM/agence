@@ -4,14 +4,26 @@ import { ApplicationStatusControl } from "@/components/admin/ApplicationStatusCo
 import { FileText, User as UserIcon, MapPin, Calendar, Download } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { getFileUrl } from "@/lib/storage";
 
 export default async function ApplicationDetailsPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const application = await applicationService.getApplicationById(params.id);
+  const applicationRaw = await applicationService.getApplicationById(params.id);
 
-  if (!application) {
+  if (!applicationRaw) {
     redirect('/admin/students');
   }
+
+  // Resolve S3 URLs for documents
+  const documentsWithUrls = await Promise.all(applicationRaw.documents.map(async (doc) => {
+      let url = doc.url;
+      if (!doc.url.startsWith('/')) {
+        url = await getFileUrl(doc.url) || '#';
+      }
+      return { ...doc, url };
+  }));
+
+  const application = { ...applicationRaw, documents: documentsWithUrls };
 
   return (
     <main className="p-8 max-w-5xl mx-auto">

@@ -1,11 +1,13 @@
 'use server'
 
 import { authService } from "@/services/auth.service";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import path from "path";
 import fs from "fs/promises";
 import { v4 as uuidv4 } from 'uuid';
+
+import { uploadFileToS3, ensureBucketExists } from "@/lib/storage";
 
 export async function uploadDocumentAction(formData: FormData) {
   const userId = await authService.requireUser();
@@ -49,16 +51,12 @@ export async function uploadDocumentAction(formData: FormData) {
   // Rename file to UUID to prevent Path Traversal or Overwriting
   const safeName = `${uuidv4()}${extension}`;
   
-  // Save to local public/uploads folder (For demo purposes. In prod: use S3)
-  const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-  
   try {
-     await fs.mkdir(uploadDir, { recursive: true });
-     
-     const buffer = Buffer.from(await file.arrayBuffer());
-     const filePath = path.join(uploadDir, safeName);
-     
-     await fs.writeFile(filePath, buffer);
+     // Ensure bucket exists (helpful for localstack first run)
+     await ensureBucketExists();
+
+     // Upload to S3
+     await uploadFileToS3(file, safeName, file.type);
 
      // Create Database Entry
      await prisma.document.create({
@@ -66,7 +64,7 @@ export async function uploadDocumentAction(formData: FormData) {
         applicationId,
         type,
         name: file.name, // Original name for display
-        url: `/uploads/${safeName}`, // Safe URL
+        url: safeName, // Store Key as URL for now
         status: "PENDING",
         }
      });

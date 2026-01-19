@@ -13,7 +13,7 @@ async function main() {
       description: 'La meilleure université pour apprendre le chinois. Campus international.',
       costRange: '3000-4500 USD/an',
       programs: 'Licence Chinois, Master Traduction, Cours de langue (1 an)',
-      imageUrl: '/images/blcu.jpg', // On mettra une image plus tard
+      imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
     },
   })
 
@@ -24,7 +24,7 @@ async function main() {
       description: 'Une des plus belles universités de Chine. Très forte en médecine et ingénierie.',
       costRange: '2500-4000 USD/an',
       programs: 'Médecine (MBBS), Génie Civil, Informatique',
-      imageUrl: '/images/wuhan.jpg',
+      imageUrl: 'https://images.unsplash.com/photo-1541339907198-e08756defeec?auto=format&fit=crop&w=800&q=80',
     },
   })
 

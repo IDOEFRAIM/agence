@@ -1,14 +1,13 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // <--- Obligatoire
+}
 
 generator client {
   provider = "prisma-client-js"
+  // Dans Prisma 7, évite d'ajouter des previewFeatures sauf si nécessaire
 }
-
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
+        
 
 // Enums pour les statuts et rôles
 enum Role {
@@ -67,10 +66,13 @@ model University {
   id          String   @id @default(cuid())
   name        String
   city        String
+  summary     String?  // Résumé court
   description String?  @db.Text
   costRange   String?  // Ex: "2000-5000 USD/an"
   programs    String?  // Liste simple ou relation plus complexe si besoin
-  imageUrl    String?
+  images      String[] // URLs des images (max 3)
+  imageUrl    String?  // URL principale de l'image
+  pdfUrl      String?  // Lien vers le PDF des conditions
   createdAt   DateTime @default(now())
 
   // Relations

@@ -1,9 +1,19 @@
 'use server'
 
 import { authService } from "@/services/auth.service"
-import { applicationService } from "@/services/application.service"
-import prisma from "@/lib/prisma"
-import { ApplicationStatus } from "@prisma/client"
+
+import { prisma } from "@/lib/prisma"
+// Define ApplicationStatus enum manually to match your Prisma schema
+export enum ApplicationStatus {
+  DRAFT = "DRAFT",
+  SUBMITTED = "SUBMITTED",
+  UNDER_REVIEW = "UNDER_REVIEW",
+  ACCEPTED = "ACCEPTED",
+  JW202_RECEIVED = "JW202_RECEIVED",
+  VISA_GRANTED = "VISA_GRANTED",
+  FLIGHT_BOOKED = "FLIGHT_BOOKED",
+  COMPLETED = "COMPLETED"
+}
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 

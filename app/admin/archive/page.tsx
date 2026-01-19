@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import {prisma} from "@/lib/prisma";
 import Link from "next/link";
 import { Search, Filter, Archive, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -38,7 +38,7 @@ export default async function ArchivePage() {
         </div>
       </header>
 
-      <div className="bg-white rounded-[24px] shadow-sm border border-slate-100/50 overflow-hidden">
+      <div className="bg-white rounded-3xl shadow-sm border border-slate-100/50 overflow-hidden">
         <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead className="bg-slate-50/50 text-slate-400 text-xs font-bold uppercase tracking-wider">
@@ -51,7 +51,7 @@ export default async function ArchivePage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {archivedApplications.map((app) => (
+            {archivedApplications.map((app:any) => (
               <tr key={app.id} className="hover:bg-slate-50/50 transition-colors group">
                 <td className="py-4 px-6">
                   <div className="flex items-center gap-3">

@@ -111,7 +111,7 @@ export function ActivityList({ initialActivities }: { initialActivities: Activit
                       return (
                       <div key={item.id} className="relative pl-10 py-4 first:pt-0 last:pb-0 group">
                          {/* Timeline Dot */}
-                         <div className={`absolute -left-[9px] top-4 h-[18px] w-[18px] rounded-full border-4 border-white ${item.color} shadow-sm group-hover:scale-110 transition-transform`}></div>
+                         <div className={`absolute -left-2.25 top-4 h-4.5 w-4.5 rounded-full border-4 border-white ${item.color} shadow-sm group-hover:scale-110 transition-transform`}></div>
                          
                          <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100/50 hover:shadow-md transition-all duration-300 flex items-start gap-4">
                             <div className={`h-12 w-12 rounded-xl flex items-center justify-center shrink-0 ${item.color} bg-opacity-10`}>
@@ -140,7 +140,7 @@ export function ActivityList({ initialActivities }: { initialActivities: Activit
          ))}
          
          {filteredItems.length === 0 && (
-             <div className="text-center py-20 text-slate-400 font-medium bg-white rounded-[24px] border border-slate-100/50">
+             <div className="text-center py-20 text-slate-400 font-medium bg-white rounded-3xl border border-slate-100/50">
                 Aucune activité trouvée pour ce filtre.
              </div>
          )}

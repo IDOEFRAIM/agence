@@ -1,6 +1,6 @@
+
 // Ce fichier gère la session utilisateur
 // Actuellement simple (cookies), mais extensible (JWT, Auth.js) sans casser le reste
-
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
